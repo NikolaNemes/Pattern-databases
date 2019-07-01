@@ -151,6 +151,7 @@
     <ClCompile Include="SixSixThreePartition1.cpp" />
     <ClCompile Include="SixSixThreePartition2.cpp" />
     <ClCompile Include="SixSixThreePartition3.cpp" />
+    <ClCompile Include="SixSixThreePartition3Ida.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryBank.h" />

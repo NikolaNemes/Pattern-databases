@@ -4,7 +4,7 @@
 
 #define INDEX_COUNT 4
 #define CHUNK_SIZE 5
-#define SLOT_COUNT 1000000
+#define SLOT_COUNT 40000000
 #define ACTION_OFFSET 4
 
 using namespace std;
@@ -47,7 +47,7 @@ void clear_table6633(int**** table)
 	delete[] table;
 }
 
-int find_index6633(int* current_indices, int value)
+int find_index6633(char* current_indices, char value)
 {
 	for (int i = 0; i < INDEX_COUNT - 1; i++)
 	{
@@ -60,7 +60,7 @@ int find_index6633(int* current_indices, int value)
 }
 
 
-void fill_successor6633(int* current_indices, int* to_fill, int index)
+void fill_successor6633(char* current_indices, char* to_fill, int index)
 {
 	for (int i = 0; i < INDEX_COUNT - 1; i++)
 	{
@@ -70,7 +70,7 @@ void fill_successor6633(int* current_indices, int* to_fill, int index)
 	to_fill[index] = current_indices[INDEX_COUNT - 1];
 }
 
-void fill_empty_move663(int* current_indices, int* to_fill, int new_pos)
+void fill_empty_move663(char* current_indices, char* to_fill, char new_pos)
 {
 	for (int i = 0; i < INDEX_COUNT - 1; i++)
 	{
@@ -79,7 +79,7 @@ void fill_empty_move663(int* current_indices, int* to_fill, int new_pos)
 	to_fill[INDEX_COUNT - 1] = new_pos;
 }
 
-void coppy_completely663(int* current_indices, int* to_fill)
+void coppy_completely663(char* current_indices, char* to_fill)
 {
 	for (int i = 0; i < INDEX_COUNT; i++)
 	{
@@ -92,27 +92,27 @@ std::vector<vector<int>> initialize_index_lookup() {
 	return a;
 }
 
-int*** initialize_index_lookup6633()
+char*** initialize_index_lookup6633()
 {
 	//vector<vector<int>> retval(16);
-	int*** retval = new int**[9];
-	int action_indexes[] = { 0, 3, 4, 5, 8};
+	char*** retval = new char**[9];
+	int action_indexes[] = { 0, 3, 4, 5, 8 };
 
 	for (int i = 0; i < 5; i++)
 	{
-		retval[action_indexes[i]] = new int*[16];
+		retval[action_indexes[i]] = new char*[16];
 		for (int j = 0; j < 16; j++)
 		{
-			retval[action_indexes[i]][j] = new int[4];
+			retval[action_indexes[i]][j] = new char[4];
 		}
 	}
 	for (int i = 0; i < 16; i++)
 	{
-		vector<int> action_none;
-		vector<int> action_left;
-		vector<int> action_right;
-		vector<int> action_up;
-		vector<int> action_down;
+		vector<char> action_none;
+		vector<char> action_left;
+		vector<char> action_right;
+		vector<char> action_up;
+		vector<char> action_down;
 
 		int new_pos = i - 4;
 		if (new_pos >= 0)
@@ -146,11 +146,11 @@ int*** initialize_index_lookup6633()
 			action_up.push_back(1);
 			action_down.push_back(1);
 		}
-		int* none_actions_pt = retval[4][i];
-		int* right_actions_pt = retval[5][i];
-		int* left_actions_pt = retval[3][i];
-		int* up_actions_pt = retval[0][i];
-		int* down_actions_pt = retval[8][i];
+		char* none_actions_pt = retval[4][i];
+		char* right_actions_pt = retval[5][i];
+		char* left_actions_pt = retval[3][i];
+		char* up_actions_pt = retval[0][i];
+		char* down_actions_pt = retval[8][i];
 
 		none_actions_pt[0] = action_none.size();
 		for (int j = 0; j < action_none.size(); j++)
@@ -186,30 +186,30 @@ int*** initialize_index_lookup6633()
 }
 
 
-void process_successors6633(int* current_indices, MemoryBank& memory_bank, int*** lookup, int**** table, int current_val, double& time_elapser, int& counter2)
+void process_successors6633(char* current_indices, MemoryBank& memory_bank, char*** lookup, int**** table, int current_val, double& time_elapser, int& counter2)
 {
 	int new_pos;
 	int index;
 	//int* action_pt = lookup[current_indices[INDEX_COUNT] + ACTION_OFFSET][current_indices[INDEX_COUNT - 1]];
-	int* action_pt = lookup[current_indices[INDEX_COUNT] + ACTION_OFFSET][current_indices[INDEX_COUNT - 1]];
+	char* action_pt = lookup[current_indices[INDEX_COUNT] + ACTION_OFFSET][current_indices[INDEX_COUNT - 1]];
 	for (int i = 0; i < action_pt[0]; i++)
 	{
 		new_pos = current_indices[INDEX_COUNT - 1] + action_pt[i + 1];
 		index = find_index6633(current_indices, new_pos);
 		if (index == -1)
 		{
-			int* temp = memory_bank.temp_slot;
+			char* temp = memory_bank.temp_slot;
 			fill_empty_move663(current_indices, temp, new_pos);
 			int* value = &table[temp[0]][temp[1]][temp[2]][temp[3]];
 
 			if (*value == -1)
 			{
-				int* temp = &memory_bank.memory[memory_bank.first_free];
+				char* temp = memory_bank.first_free;
 				memory_bank.first_free += CHUNK_SIZE;
-				if (memory_bank.first_free == CHUNK_SIZE * SLOT_COUNT)
+				if (memory_bank.first_free == memory_bank.turnover)
 				{
 					cout << "Full circle" << endl;
-					memory_bank.first_free = 0;
+					memory_bank.first_free = &memory_bank.memory[0];
 				}
 				counter2++;
 				coppy_completely663(memory_bank.temp_slot, temp);
@@ -220,22 +220,21 @@ void process_successors6633(int* current_indices, MemoryBank& memory_bank, int**
 		}
 		else
 		{
-			int* temp = memory_bank.temp_slot;
+			char* temp = memory_bank.temp_slot;
 			fill_successor6633(current_indices, temp, index);
 			int* value = &table[temp[0]][temp[1]][temp[2]][temp[3]];
 			if (*value == -1)
 			{
-				int* temp = &memory_bank.memory[memory_bank.first_free];
-				memory_bank.first_free += CHUNK_SIZE;
-				if (memory_bank.first_free == CHUNK_SIZE * SLOT_COUNT)
+				char* temp = memory_bank.first_free;
+				memory_bank.first_free+= CHUNK_SIZE;
+				if (memory_bank.first_free == memory_bank.turnover)
 				{
 					cout << "Full circle" << endl;
-					memory_bank.first_free = 0;
+					memory_bank.first_free = &memory_bank.memory[0];
 				}
 				counter2++;
 				coppy_completely663(memory_bank.temp_slot, temp);
 				temp[INDEX_COUNT] = action_pt[i + 1];
-				memory_bank.remaining.push(temp);
 				*value = current_val + 1;
 			}
 		}
@@ -271,13 +270,16 @@ void initialize_table_partition6633()
 	int counter_all = 0;
 	int current_value;
 	MemoryBank memory_bank(CHUNK_SIZE, SLOT_COUNT);
-	//probaj sa++ da brojis elemente u queue samo za pocetak
-	int* current_indices = &memory_bank.memory[memory_bank.first_free];
+
+
+	char* current_indices = memory_bank.first_free;
 	memory_bank.first_free += CHUNK_SIZE;
-	if (memory_bank.first_free == CHUNK_SIZE * SLOT_COUNT)
+	if (memory_bank.first_free == memory_bank.turnover)
 	{
-		memory_bank.first_free = 0;
+		memory_bank.first_free = &memory_bank.memory[0];
 	}
+
+
 	counter_all++;
 	current_indices[0] = 12;
 	current_indices[1] = 13;
@@ -285,17 +287,21 @@ void initialize_table_partition6633()
 	current_indices[3] = 0;
 	current_indices[4] = 0; //none action
 	table[12][13][14][0] = 0;
-	int*** lookup =  initialize_index_lookup6633();
+	char*** lookup = initialize_index_lookup6633();
 	double time_elapser = 0;
 	clock_t begin = clock();
-	while(memory_bank.first_free != memory_bank.first_taken)
+	while (memory_bank.first_free != memory_bank.first_taken)
 	{
-		current_indices = &memory_bank.memory[memory_bank.first_taken];
-		memory_bank.first_taken +=  CHUNK_SIZE;
-		if (memory_bank.first_taken == (CHUNK_SIZE) * SLOT_COUNT)
+
+
+		current_indices = memory_bank.first_taken;
+		memory_bank.first_taken += CHUNK_SIZE;
+		if (memory_bank.first_taken == memory_bank.turnover)
 		{
-			memory_bank.first_taken = 0;
+			memory_bank.first_taken = &memory_bank.memory[0];
 		}
+		//ali ne zelis da ga odma popujes, ovo je bitno, on leti tek na kraju ove metode, da ga ne bi neko drugi pregazio
+
 		current_value = table[current_indices[0]][current_indices[1]][current_indices[2]][current_indices[3]];
 		//clock_t begin2 = clock();
 		process_successors6633(current_indices, memory_bank, lookup, table, current_value, time_elapser, counter_all);
@@ -326,18 +332,10 @@ void initialize_table_partition6633()
 			}
 		}
 	}
-	cout << "Counter: " << counter << "/3360" << endl;
-	cout << "First free index" << memory_bank.first_free << endl;
-	cout << "Chunk size: " << CHUNK_SIZE  << endl;
-	cout << "Counter2: " << counter_all * 5 << endl;
-	
-	//ova logika deljenja mozda ne valja
-	//treba prepraviti da moze da vrti sigurno dobro
-	//za kraj onda treba isprobati da li char/short umesto inta
+
+	cout << "Counter distinct: " << counter << "/3360" << endl;
+	cout << "Chunk size: " << CHUNK_SIZE << endl;
+	cout << "Counter all: " << counter_all << endl;
 	save_partition_to_file6633(table);
 	clear_table6633(table);
 }
-
-
-
-

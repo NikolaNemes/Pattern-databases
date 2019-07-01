@@ -11,10 +11,10 @@ public:
 	MemoryBank();
 	MemoryBank(int chunk_size, int slot_count);
 	~MemoryBank();
-	int* memory;
-	int* temp_slot;
-	stack<int*> free_slots;
-	int first_taken;
-	int first_free;
-	queue<int*> remaining;
+	char* temp_slot;
+	char* memory;
+	char* stack_memory;
+	char* first_taken;
+	char* first_free;
+	char* turnover;
 };

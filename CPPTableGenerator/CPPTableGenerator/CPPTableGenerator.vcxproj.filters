@@ -30,6 +30,9 @@
     <ClCompile Include="MemoryBank.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SixSixThreePartition3Ida.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryBank.h">

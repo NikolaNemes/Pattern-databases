@@ -7,6 +7,8 @@
 
 using namespace std;
 
+/*
+
 int****** initialize_table6632()
 {
 	int****** retval = new int*****[16];
@@ -188,3 +190,4 @@ void initialize_table_partition6632()
 
 
 
+*/
