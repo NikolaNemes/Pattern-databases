@@ -9,7 +9,7 @@
 
 using namespace std;
 
-
+/*
 
 int******* initialize_table6631()
 {
@@ -386,3 +386,4 @@ void initialize_table_partition6631()
 	
 }
 
+*/
