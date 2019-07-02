@@ -5,8 +5,6 @@ using namespace std;
 
 int main()
 {
-	//initialize_table_partition6631();
-	initialize_table_partition6633ida();
-	//initialize_table_partition6633();
-	//initialize_table_partition6632();
+	Partition1::create_partition_inplace();
+	//Partition3::create_partition_inplace();
 }

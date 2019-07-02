@@ -33,6 +33,15 @@
     <ClCompile Include="SixSixThreePartition3Ida.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SixSixThreePartition3InPlace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SixSixThreePartition1InPlace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SixSixThreePartition1OneDimensionalInPlace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryBank.h">
