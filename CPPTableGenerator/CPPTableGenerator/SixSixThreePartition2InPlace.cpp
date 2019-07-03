@@ -1,11 +1,11 @@
-//1, 2, 4, 5, 8, 9
+//3, 6, 7, 10, 11, 15
 #include "SixSixThreePartition.h"
 #include <cmath>
 
 using namespace std;
 
 
-namespace Partition1
+namespace Partition2
 {
 	int****** initialize_tableInPlace(int default)
 	{
@@ -62,11 +62,10 @@ namespace Partition1
 		delete[] table;
 	}
 
-
 	void save_to_file(int****** table)
 	{
 		FILE* file;
-		errno_t error_code = fopen_s(&file, "partition1.bin", "wb");
+		errno_t error_code = fopen_s(&file, "partition2.bin", "wb");
 
 		for (int i1 = 0; i1 < 16; i1++)
 		{
@@ -92,7 +91,7 @@ namespace Partition1
 	void read_file(int****** table)
 	{
 		FILE* file;
-		errno_t error_code = fopen_s(&file, "partition1.bin", "rb");
+		errno_t error_code = fopen_s(&file, "partition2.bin", "rb");
 
 		for (int i1 = 0; i1 < 16; i1++)
 		{
@@ -113,47 +112,49 @@ namespace Partition1
 		fclose(file);
 	}
 
-	void indices_to_board(int* board, int index1, int index2, int index4, int index5, int index8, int index9)
+
+
+	void indices_to_board(int* board, int index3, int index6, int index7, int index10, int index11, int index15)
 	{
 		for (int i = 0; i < 16; i++)
 		{
 			board[i] = -1;
 		}
-		board[index1] = 1;
-		board[index2] = 2;
-		board[index4] = 4;
-		board[index5] = 5;
-		board[index8] = 8;
-		board[index9] = 9;
+		board[index3] = 3;
+		board[index6] = 6;
+		board[index7] = 7;
+		board[index10] = 10;
+		board[index11] = 11;
+		board[index15] = 15;
 	}
-
-	void table_to_indices(int& index1, int& index2, int& index4, int& index5, int& index8, int& index9, int* board)
+	//3, 6, 7, 10, 11, 15
+	void table_to_indices(int& index3, int& index6, int& index7, int& index10, int& index11, int& index15, int* board)
 	{
 		for (int i = 0; i < 16; i++)
 		{
-			if (board[i] == 1)
+			if (board[i] == 3)
 			{
-				index1 = i;
+				index3 = i;
 			}
-			else if (board[i] == 2)
+			else if (board[i] == 6)
 			{
-				index2 = i;
+				index6 = i;
 			}
-			else if (board[i] == 4)
+			else if (board[i] == 7)
 			{
-				index4 = i;
+				index7 = i;
 			}
-			else if (board[i] == 5)
+			else if (board[i] == 10)
 			{
-				index5 = i;
+				index10 = i;
 			}
-			else if (board[i] == 8)
+			else if (board[i] == 11)
 			{
-				index8 = i;
+				index11 = i;
 			}
-			else if (board[i] == 9)
+			else if (board[i] == 15)
 			{
-				index9 = i;
+				index15 = i;
 			}
 		}
 	}
@@ -238,13 +239,13 @@ namespace Partition1
 			-1, -4, 0, 0,  0  //pozicija 15, moze levo i gore
 		};
 
-		//1, 2, 4, 5, 8, 9
-		int index1;
-		int index2;
-		int index4;
-		int index5;
-		int index8;
-		int index9;
+		//3, 6, 7, 10, 11, 15
+		int index3;
+		int index6;
+		int index7;
+		int index10;
+		int index11;
+		int index15;
 		int zeroIndex;
 		int tempIndex;
 		int switchIndex;
@@ -254,11 +255,11 @@ namespace Partition1
 		int counter = 1;
 		prime_positions[0] = 0;
 
-		table_to_indices(index1, index2, index4, index5, index8, index9, board);
+		table_to_indices(index3, index6, index7, index10, index11, index15, board);
 		zeroIndex = get_zero_index(board);
-		table[index1][index2][index4][index5][index8][index9] = 0;
+		table[index3][index6][index7][index10][index11][index15] = 0;
 
-		zero_pos[index1][index2][index4][index5][index8][index9] |=  1UL << zeroIndex;
+		zero_pos[index3][index6][index7][index10][index11][index15] |= 1UL << zeroIndex;
 
 		double time_elapser = 0;
 
@@ -277,11 +278,11 @@ namespace Partition1
 								for (int i6 = 0; i6 < 16; i6++)
 								{
 									if (table[i1][i2][i3][i4][i5][i6] <= depth)
-									{					
+									{
 										int temp = zero_pos[i1][i2][i3][i4][i5][i6];
 										for (int zeroIndexIterator = 0; zeroIndexIterator < 16; zeroIndexIterator++)
 										{
-											if ((temp & 1) != 1) 
+											if ((temp & 1) != 1)
 											{
 												temp >>= 1; continue;
 											}
@@ -316,17 +317,17 @@ namespace Partition1
 													board[switchIndex] = 0;
 													tempIndex = zeroIndex; //cuvamo stari indeks
 													zeroIndex = switchIndex;
-													table_to_indices(index1, index2, index4, index5, index8, index9, board);
+													table_to_indices(index3, index6, index7, index10, index11, index15, board);
 
-													if (table[index1][index2][index4][index5][index8][index9] == 120)
+													if (table[index3][index6][index7][index10][index11][index15] == 120)
 													{
-														table[index1][index2][index4][index5][index8][index9] = depth + 1;;
-														delayed_zeroes[index1][index2][index4][index5][index8][index9] |= 1UL << zeroIndex;
+														table[index3][index6][index7][index10][index11][index15] = depth + 1;;
+														delayed_zeroes[index3][index6][index7][index10][index11][index15] |= 1UL << zeroIndex;
 														counter++;
 													}
 													else
 													{
-														delayed_zeroes[index1][index2][index4][index5][index8][index9] |= 1UL << zeroIndex;
+														delayed_zeroes[index3][index6][index7][index10][index11][index15] |= 1UL << zeroIndex;
 													}
 													board[zeroIndex] = board[tempIndex];
 													zeroIndex = tempIndex;
@@ -367,15 +368,14 @@ namespace Partition1
 			if (counter == 5765760)
 			{
 				break;
-			}	
+			}
 		}
-
 
 		save_to_file(table);
 
 		//testiranje snimanja i citanja fajlova
-		//read_file(delayed_zeroes);
-		/*for (int i1 = 0; i1 < 16; i1++)
+		read_file(delayed_zeroes);
+		for (int i1 = 0; i1 < 16; i1++)
 		{
 			for (int i2 = 0; i2 < 16; i2++)
 			{
@@ -396,8 +396,9 @@ namespace Partition1
 					}
 				}
 			}
-		}*/
-		//cout << "Istestirao fajl" << endl;
+		}
+		cout << "Istestirao fajl" << endl;
+
 
 		clear_tableInPlace(table);
 		clear_tableInPlace(zero_pos);

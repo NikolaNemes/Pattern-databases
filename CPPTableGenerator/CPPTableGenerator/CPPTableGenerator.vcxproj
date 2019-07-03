@@ -150,8 +150,8 @@
     <ClCompile Include="MemoryBank.cpp" />
     <ClCompile Include="SixSixThreePartition1.cpp" />
     <ClCompile Include="SixSixThreePartition1InPlace.cpp" />
-    <ClCompile Include="SixSixThreePartition1OneDimensionalInPlace.cpp" />
     <ClCompile Include="SixSixThreePartition2.cpp" />
+    <ClCompile Include="SixSixThreePartition2InPlace.cpp" />
     <ClCompile Include="SixSixThreePartition3.cpp" />
     <ClCompile Include="SixSixThreePartition3Ida.cpp" />
     <ClCompile Include="SixSixThreePartition3InPlace.cpp" />

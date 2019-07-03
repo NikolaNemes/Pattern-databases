@@ -39,7 +39,7 @@
     <ClCompile Include="SixSixThreePartition1InPlace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SixSixThreePartition1OneDimensionalInPlace.cpp">
+    <ClCompile Include="SixSixThreePartition2InPlace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

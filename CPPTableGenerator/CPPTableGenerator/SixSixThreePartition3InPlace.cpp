@@ -23,6 +23,41 @@ namespace Partition3
 		return retval;
 	}
 
+	void save_to_file(int*** table)
+	{
+		FILE* file;
+		errno_t error_code = fopen_s(&file, "partition3.bin", "wb");
+
+		for (int i1 = 0; i1 < 16; i1++)
+		{
+			for (int i2 = 0; i2 < 16; i2++)
+			{
+				//table[i1][i2] = new int[16];
+				fwrite(table[i1][i2], 4, 16, file);
+			}
+		}
+
+		fclose(file);
+
+	}
+
+
+	void read_file(int*** table)
+	{
+		FILE* file;
+		errno_t error_code = fopen_s(&file, "partition3.bin", "rb");
+
+		for (int i1 = 0; i1 < 16; i1++)
+		{
+			for (int i2 = 0; i2 < 16; i2++)
+			{
+				fread(table[i1][i2], 4, 16, file);
+			}
+		}
+
+		fclose(file);
+	}
+
 	void clear_table6633InPlace(int*** table)
 	{
 		for (int i1 = 0; i1 < 16; i1++)
@@ -165,7 +200,7 @@ namespace Partition3
 		table[index12][index13][index14] = 0;
 
 		zero_pos[index12][index13][index14] |= 1UL << zeroIndex;
-
+		delayed_zeroes[index12][index13][index14] |= 1UL << zeroIndex;
 
 		double time_elapser = 0;
 
@@ -261,6 +296,29 @@ namespace Partition3
 				break;
 			}
 		}
+
+
+		save_to_file(table);
+
+		//testiranje snimanja i citanja fajlova
+		/*read_file(delayed_zeroes);
+
+		for (int i1 = 0; i1 < 16; i1++)
+		{
+			for (int i2 = 0; i2 < 16; i2++)
+			{
+				for (int i3 = 0; i3 < 16; i3++)
+				{
+					if (table[i1][i2][i3] != delayed_zeroes[i1][i2][i3])
+					{
+						cout << "Oh nou" << endl;
+					}
+				}
+			}
+		}*/
+
+
+
 		clear_table6633InPlace(delayed_zeroes);
 		clear_table6633InPlace(table);
 		clear_table6633InPlace(zero_pos);
