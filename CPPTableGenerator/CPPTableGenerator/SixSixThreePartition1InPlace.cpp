@@ -1,5 +1,6 @@
 //1, 2, 4, 5, 8, 9
 #include "SixSixThreePartition.h"
+#include <cmath>
 
 using namespace std;
 
@@ -118,7 +119,7 @@ namespace Partition1
 		return -1;
 	}
 
-	void get_prime_positions(int* board, int* positions, int starting_pos, int* lookup, int& predlog)
+	void get_prime_positions(int* board, int* positions, int starting_pos, int* lookup)
 	{
 		int action_index = starting_pos * 5;
 		int next_pos;
@@ -130,12 +131,11 @@ namespace Partition1
 			if (board[next_pos] == -1)
 			{
 				board[next_pos] = 0;
-				get_prime_positions(board, positions, next_pos, lookup, predlog);
+				get_prime_positions(board, positions, next_pos, lookup);
 			}
 			else if (board[next_pos] > 0)
 			{
 				add_self = true;
-				predlog++;
 			}
 			action_index++;
 		}
@@ -161,37 +161,10 @@ namespace Partition1
 		std::cout << "+----+----+----+----+\n";
 	}
 
-	bool check_if_all_different(int i1, int i2, int i3, int i4, int i5, int i6)
-	{
-		if (i1 == i2) return false;
-		if (i1 == i3) return false;
-		if (i1 == i4) return false;
-		if (i1 == i5) return false;
-		if (i1 == i6) return false;
-
-		if (i2 == i3) return false;
-		if (i2 == i4) return false;
-		if (i2 == i5) return false;
-		if (i2 == i6) return false;
-
-		if (i3 == i4) return false;
-		if (i3 == i5) return false;
-		if (i3 == i6) return false;
-
-		if (i4 == i5) return false;
-		if (i4 == i6) return false;
-
-		if (i5 == i6) return false;
-
-		return true;
-	}
-
-	//postoji negde minimalna greska, zal is coming
-
 	void create_partition_inplace()
 	{
 		int******  table = initialize_tableInPlace(120);
-		int******  fake_table = initialize_tableInPlace(120);
+		int******  delayed_zeroes = initialize_tableInPlace(0);
 		int******  zero_pos = initialize_tableInPlace(0);
 		int depth = 0;
 		int lookup[80] =
@@ -225,24 +198,16 @@ namespace Partition1
 		int tempIndex;
 		int switchIndex;
 		int actionIndex;
-		int predlog;
-		int realnost;
 		int board[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 		int prime_positions[16];
 		int counter = 1;
-		int value;
 		prime_positions[0] = 0;
 
 		table_to_indices(index1, index2, index4, index5, index8, index9, board);
 		zeroIndex = get_zero_index(board);
 		table[index1][index2][index4][index5][index8][index9] = 0;
 
-
-
-
-
 		zero_pos[index1][index2][index4][index5][index8][index9] |=  1UL << zeroIndex;
-		//clock_t begin = clock();
 
 		double time_elapser = 0;
 
@@ -260,23 +225,11 @@ namespace Partition1
 							{
 								for (int i6 = 0; i6 < 16; i6++)
 								{
-									if (table[i1][i2][i3][i4][i5][i6] <= depth) //ovo svaba kaze da bi trebalo biti <= al to cemo jos testirati
-									{
-										index1 = i1;
-										index2 = i2;
-										index4 = i3;
-										index5 = i4;
-										index8 = i5;
-										index9 = i6;
-										value = table[i1][i2][i3][i4][i5][i6];
-
-										indices_to_board(board, index1, index2, index4, index5, index8, index9);
-
-										//logika kako od nekog broja, dobiti indeks
-										int temp = zero_pos[index1][index2][index4][index5][index8][index9];
+									if (table[i1][i2][i3][i4][i5][i6] <= depth)
+									{					
+										int temp = zero_pos[i1][i2][i3][i4][i5][i6];
 										for (int zeroIndexIterator = 0; zeroIndexIterator < 16; zeroIndexIterator++)
 										{
-											//cout << (temp & 1) << endl;
 											if ((temp & 1) != 1) 
 											{
 												temp >>= 1; continue;
@@ -285,6 +238,8 @@ namespace Partition1
 											zeroIndex = zeroIndexIterator;
 											temp >>= 1;
 
+
+											indices_to_board(board, i1, i2, i3, i4, i5, i6);
 											board[zeroIndex] = 0;
 
 											//drawBrd(board);
@@ -292,9 +247,7 @@ namespace Partition1
 											zeroIndex = get_zero_index(board);
 											prime_positions[0] = 0; //moras resetovati ovo cudo pred svako koriscenje
 
-											predlog = 0;
-											realnost = 0;
-											get_prime_positions(board, prime_positions, zeroIndex, lookup, predlog);
+											get_prime_positions(board, prime_positions, zeroIndex, lookup);
 
 											for (int i = 0; i < prime_positions[0]; i++)
 											{
@@ -309,27 +262,21 @@ namespace Partition1
 														actionIndex++;
 														continue;
 													}
-													realnost++;
 													board[zeroIndex] = board[switchIndex];
 													board[switchIndex] = 0;
 													tempIndex = zeroIndex; //cuvamo stari indeks
 													zeroIndex = switchIndex;
 													table_to_indices(index1, index2, index4, index5, index8, index9, board);
 
-
-
 													if (table[index1][index2][index4][index5][index8][index9] == 120)
 													{
-
-														//table[index1][index2][index4][index5][index8][index9] = value + 1;
 														table[index1][index2][index4][index5][index8][index9] = depth + 1;;
-
-
-														//zero_pos[index1][index2][index4][index5][index8][index9] = zeroIndex;
-														zero_pos[index1][index2][index4][index5][index8][index9] |= 1UL << zeroIndex;
-
-
+														delayed_zeroes[index1][index2][index4][index5][index8][index9] |= 1UL << zeroIndex;
 														counter++;
+													}
+													else
+													{
+														delayed_zeroes[index1][index2][index4][index5][index8][index9] |= 1UL << zeroIndex;
 													}
 													board[zeroIndex] = board[tempIndex];
 													zeroIndex = tempIndex;
@@ -337,35 +284,7 @@ namespace Partition1
 													actionIndex++;
 												}
 											}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 										}
-
-
-
-										
-
-
-
-
-
-
-
-
-
 									}
 								}
 							}
@@ -373,66 +292,38 @@ namespace Partition1
 					}
 				}
 			}
-			if (counter == 5757723)
+			for (int i1 = 0; i1 < 16; i1++)
 			{
-				break;
+				for (int i2 = 0; i2 < 16; i2++)
+				{
+					for (int i3 = 0; i3 < 16; i3++)
+					{
+						for (int i4 = 0; i4 < 16; i4++)
+						{
+							for (int i5 = 0; i5 < 16; i5++)
+							{
+								for (int i6 = 0; i6 < 16; i6++)
+								{
+									zero_pos[i1][i2][i3][i4][i5][i6] |= delayed_zeroes[i1][i2][i3][i4][i5][i6];
+								}
+							}
+						}
+					}
+				}
 			}
 			depth++;
 			std::cout << "Dubina: " << depth << endl;
 			std::cout << "Counter: " << counter << endl;
-			//cout << depth << endl;
-		}
-
-		int counter2 = 0;
-		/*
-		for (int i1 = 0; i1 < 16; i1++)
-		{
-			for (int i2 = 0; i2 < 16; i2++)
+			if (counter == 5765760)
 			{
-				for (int i3 = 0; i3 < 16; i3++)
-				{
-					for (int i4 = 0; i4 < 16; i4++)
-					{
-						for (int i5 = 0; i5 < 16; i5++)
-						{
-							for (int i6 = 0; i6 < 16; i6++)
-							{
-								if (check_if_all_different(i1, i2, i3, i4, i5, i6))
-								{
-									if (table[i1][i2][i3][i4][i5][i6] == 120)
-									{
-										counter2++;
-										index1 = i1;
-										index2 = i2;
-										index4 = i3;
-										index5 = i4;
-										index8 = i5;
-										index9 = i6;
-										indices_to_board(board, index1, index2, index4, index5, index8, index9, zero_pos);
-										zeroIndex = get_zero_index(board);
-										drawBrd(board);
-										int cdskjaf = 5;
-									}
-								}
-							}
-						}
-					}
-				}
+				break;
 			}
+			
+			
 		}
-		*/
-
-		std::cout << "Propusteni: " << counter2 << endl;
-
-		//clock_t end = clock();
-		//double elapsed = double(end - begin) / CLOCKS_PER_SEC;
-		//cout << "Time: " << elapsed << endl;
-		//cout << "Partial time: " << time_elapser / CLOCKS_PER_SEC << endl;
 		clear_tableInPlace(table);
 		clear_tableInPlace(zero_pos);
-
+		clear_tableInPlace(delayed_zeroes);
 	}
-
-
 }
 
