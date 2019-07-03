@@ -61,7 +61,7 @@ namespace Partition1
 		delete[] table;
 	}
 
-	void indices_to_board(int* board, int index1, int index2, int index4, int index5, int index8, int index9, int****** zero_pos)
+	void indices_to_board(int* board, int index1, int index2, int index4, int index5, int index8, int index9)
 	{
 		for (int i = 0; i < 16; i++)
 		{
@@ -73,7 +73,6 @@ namespace Partition1
 		board[index5] = 5;
 		board[index8] = 8;
 		board[index9] = 9;
-		board[zero_pos[index1][index2][index4][index5][index8][index9]] = 0;
 	}
 
 	void table_to_indices(int& index1, int& index2, int& index4, int& index5, int& index8, int& index9, int* board)
@@ -193,7 +192,7 @@ namespace Partition1
 	{
 		int******  table = initialize_tableInPlace(120);
 		int******  fake_table = initialize_tableInPlace(120);
-		int******  zero_pos = initialize_tableInPlace(-1);
+		int******  zero_pos = initialize_tableInPlace(0);
 		int depth = 0;
 		int lookup[80] =
 		{
@@ -216,7 +215,6 @@ namespace Partition1
 		};
 
 		//1, 2, 4, 5, 8, 9
-
 		int index1;
 		int index2;
 		int index4;
@@ -238,7 +236,12 @@ namespace Partition1
 		table_to_indices(index1, index2, index4, index5, index8, index9, board);
 		zeroIndex = get_zero_index(board);
 		table[index1][index2][index4][index5][index8][index9] = 0;
-		zero_pos[index1][index2][index4][index5][index8][index9] = zeroIndex;
+
+
+
+
+
+		zero_pos[index1][index2][index4][index5][index8][index9] |=  1UL << zeroIndex;
 		//clock_t begin = clock();
 
 		double time_elapser = 0;
@@ -257,7 +260,7 @@ namespace Partition1
 							{
 								for (int i6 = 0; i6 < 16; i6++)
 								{
-									if (table[i1][i2][i3][i4][i5][i6] == depth) //ovo svaba kaze da bi trebalo biti <= al to cemo jos testirati
+									if (table[i1][i2][i3][i4][i5][i6] <= depth) //ovo svaba kaze da bi trebalo biti <= al to cemo jos testirati
 									{
 										index1 = i1;
 										index2 = i2;
@@ -267,57 +270,102 @@ namespace Partition1
 										index9 = i6;
 										value = table[i1][i2][i3][i4][i5][i6];
 
-										indices_to_board(board, index1, index2, index4, index5, index8, index9, zero_pos);
-										zeroIndex = get_zero_index(board);
-										prime_positions[0] = 0; //moras resetovati ovo cudo pred svako koriscenje
+										indices_to_board(board, index1, index2, index4, index5, index8, index9);
 
-										predlog = 0;
-										realnost = 0;
-										get_prime_positions(board, prime_positions, zeroIndex, lookup, predlog);
-
-										for (int i = 0; i < prime_positions[0]; i++)
+										//logika kako od nekog broja, dobiti indeks
+										int temp = zero_pos[index1][index2][index4][index5][index8][index9];
+										for (int zeroIndexIterator = 0; zeroIndexIterator < 16; zeroIndexIterator++)
 										{
-											zeroIndex = prime_positions[i + 1];
-											actionIndex = zeroIndex * 5;
-											while (true)
+											//cout << (temp & 1) << endl;
+											if ((temp & 1) != 1) 
 											{
-												if (lookup[actionIndex] == 0) break;
-												switchIndex = zeroIndex + lookup[actionIndex];
-												if (board[switchIndex] <= 0)
-												{
-													actionIndex++;
-													continue;
-												}
-												realnost++;
-												board[zeroIndex] = board[switchIndex];
-												board[switchIndex] = 0;
-												tempIndex = zeroIndex; //cuvamo stari indeks
-												zeroIndex = switchIndex;
-												table_to_indices(index1, index2, index4, index5, index8, index9, board);
-
-
-
-												if (table[index1][index2][index4][index5][index8][index9] == 120)
-												{
-
-													//table[index1][index2][index4][index5][index8][index9] = value + 1;
-													table[index1][index2][index4][index5][index8][index9] = depth + 1;;
-													zero_pos[index1][index2][index4][index5][index8][index9] = zeroIndex;
-													counter++;
-												}
-												board[zeroIndex] = board[tempIndex];
-												zeroIndex = tempIndex;
-												board[zeroIndex] = 0;
-												actionIndex++;
+												temp >>= 1; continue;
 											}
+
+											zeroIndex = zeroIndexIterator;
+											temp >>= 1;
+
+											board[zeroIndex] = 0;
+
+											//drawBrd(board);
+
+											zeroIndex = get_zero_index(board);
+											prime_positions[0] = 0; //moras resetovati ovo cudo pred svako koriscenje
+
+											predlog = 0;
+											realnost = 0;
+											get_prime_positions(board, prime_positions, zeroIndex, lookup, predlog);
+
+											for (int i = 0; i < prime_positions[0]; i++)
+											{
+												zeroIndex = prime_positions[i + 1];
+												actionIndex = zeroIndex * 5;
+												while (true)
+												{
+													if (lookup[actionIndex] == 0) break;
+													switchIndex = zeroIndex + lookup[actionIndex];
+													if (board[switchIndex] <= 0)
+													{
+														actionIndex++;
+														continue;
+													}
+													realnost++;
+													board[zeroIndex] = board[switchIndex];
+													board[switchIndex] = 0;
+													tempIndex = zeroIndex; //cuvamo stari indeks
+													zeroIndex = switchIndex;
+													table_to_indices(index1, index2, index4, index5, index8, index9, board);
+
+
+
+													if (table[index1][index2][index4][index5][index8][index9] == 120)
+													{
+
+														//table[index1][index2][index4][index5][index8][index9] = value + 1;
+														table[index1][index2][index4][index5][index8][index9] = depth + 1;;
+
+
+														//zero_pos[index1][index2][index4][index5][index8][index9] = zeroIndex;
+														zero_pos[index1][index2][index4][index5][index8][index9] |= 1UL << zeroIndex;
+
+
+														counter++;
+													}
+													board[zeroIndex] = board[tempIndex];
+													zeroIndex = tempIndex;
+													board[zeroIndex] = 0;
+													actionIndex++;
+												}
+											}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 										}
 
-										//cout << "Realnost je: " << realnost << endl;
-										int xdddd = 3;
-										if (realnost != predlog)
-										{
-											int holy_mary = 0;
-										}
+
+
+										
+
+
+
+
+
+
+
+
+
 									}
 								}
 							}
@@ -336,7 +384,7 @@ namespace Partition1
 		}
 
 		int counter2 = 0;
-
+		/*
 		for (int i1 = 0; i1 < 16; i1++)
 		{
 			for (int i2 = 0; i2 < 16; i2++)
@@ -372,7 +420,7 @@ namespace Partition1
 				}
 			}
 		}
-
+		*/
 
 		std::cout << "Propusteni: " << counter2 << endl;
 
