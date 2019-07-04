@@ -4,7 +4,10 @@
 #include "IDAStar.h"
 #include "Heuristic.h"
 #include <string>
-#include <iostream>
+#include <ctime>
+#include "NeuralNetwork.h"
+
+
 
 using namespace std;
 
@@ -115,8 +118,10 @@ void run_test(GameLogic& game_logic, table real_table, int****** partition1, int
 {
 	int counter = 0;
 	int search_node_counter = 0;
+	
+	clock_t  begin = clock();
 	int* actions = solve_puzzle(game_logic, real_table, partition1, partition2, partition3, heuristic_enum, search_node_counter);
-
+	clock_t end = clock();
 	cout << "Table solution" << endl;
 	cout << "==============================" << endl;
 	int* temp_table = new int[17];
@@ -131,9 +136,6 @@ void run_test(GameLogic& game_logic, table real_table, int****** partition1, int
 		}
 		else
 		{
-			cout << "Action: " << *actions << endl;
-			
-			
 			game_logic.apply_action_inplace(temp_table, (Action)*actions);
 			drawBrd(temp_table);
 			cout << "==============================" << endl;
@@ -143,6 +145,7 @@ void run_test(GameLogic& game_logic, table real_table, int****** partition1, int
 	}
 	cout << "Solved in: " << counter << " moves" << endl;
 	cout << "Search nodes expanded: " << search_node_counter << endl;
+	cout << "Time passed: " << (double(end - begin) / CLOCKS_PER_SEC) << endl;
 	cout << "==============================" << endl;
 	delete[] temp_table;
 }
@@ -152,11 +155,18 @@ void run_test(GameLogic& game_logic, table real_table, int****** partition1, int
 
 int main() {
 
+	
+
 	//initialization of tables for 663 pattern database
 	int****** partition1 = new int*****[16];
 	int****** partition2 = new int*****[16];
 	int*** partition3 = new int**[16];
 	initialize_partitions663(partition1, partition2, partition3);
+
+	
+
+	//trainPartition3(partition3);
+	//trainPartition3Encoded(partition3);
 
 	//udaljena za 50
 	int real_table[17] = { 4, 15, 0, 10, 2, 14, 13, 3, 9, 12, 1, 6, 5, 7, 11, 8, 0 };
