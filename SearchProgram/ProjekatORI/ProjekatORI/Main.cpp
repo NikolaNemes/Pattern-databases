@@ -4,6 +4,7 @@
 #include "IDAStar.h"
 #include "Heuristic.h"
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -121,7 +122,6 @@ void run_test(GameLogic& game_logic, table real_table, int****** partition1, int
 	int* temp_table = new int[17];
 	copy_table_with_action(real_table, temp_table);
 	drawBrd(temp_table);
-	cout << "Manhhattan" << manhattan_heuristic(temp_table);
 	while (true)
 	{
 		if (*actions == Action::NONE)
@@ -135,9 +135,7 @@ void run_test(GameLogic& game_logic, table real_table, int****** partition1, int
 			
 			
 			game_logic.apply_action_inplace(temp_table, (Action)*actions);
-
 			drawBrd(temp_table);
-			cout << "Manhhattan" << manhattan_heuristic(temp_table);
 			cout << "==============================" << endl;
 			actions = actions + 1;
 			counter++;

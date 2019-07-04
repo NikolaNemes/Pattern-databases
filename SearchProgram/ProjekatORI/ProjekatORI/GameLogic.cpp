@@ -119,6 +119,7 @@ int * GameLogic::get_possible_actions_by_index(int index)
 	return &this->lookup_table[Action::NONE][index * 4];
 }
 
+
 int * GameLogic::apply_action(table state, Action action)
 {
 
