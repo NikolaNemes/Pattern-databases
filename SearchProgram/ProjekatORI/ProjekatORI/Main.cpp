@@ -8,7 +8,6 @@
 #include "NeuralNetwork.h"
 
 
-
 using namespace std;
 
 
@@ -89,6 +88,8 @@ void select_heuristic(string& heuristic, Heuristic& heuristic_enum)
 	cout << "1. Manhattan" << endl;
 	cout << "2. 663 Heuristic" << endl;
 	cout << "3. Manhattan+663 heuristic" << endl;
+	cout << "4. Neural heuristic" << endl;
+	cout << "5. Neural 663 mix" << endl;
 	cout << "==========================" << endl;
 	cin >> input;
 	if (input == 1)
@@ -105,6 +106,16 @@ void select_heuristic(string& heuristic, Heuristic& heuristic_enum)
 	{
 		heuristic = "Manhattan+663";
 		heuristic_enum = MANHHATTAN_ANDP663;
+	}
+	else if (input == 4)
+	{
+		heuristic = "Neural heuristic";
+		heuristic_enum = NEURAL;
+	}
+	else if (input == 5)
+	{
+		heuristic = "Neural 663 mix";
+		heuristic_enum = P663NEURALMIX;
 	}
 	else
 	{
@@ -162,11 +173,11 @@ int main() {
 	int****** partition2 = new int*****[16];
 	int*** partition3 = new int**[16];
 	initialize_partitions663(partition1, partition2, partition3);
+	initialize_neural_networks();
 
 	
+	//trainPartition1or2Encoded(partition2, "../NeuralNetworks/partition2");
 
-	//trainPartition3(partition3);
-	//trainPartition3Encoded(partition3);
 
 	//udaljena za 50
 	int real_table[17] = { 4, 15, 0, 10, 2, 14, 13, 3, 9, 12, 1, 6, 5, 7, 11, 8, 0 };
