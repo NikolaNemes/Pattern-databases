@@ -44,6 +44,7 @@ void select_table(int* current_table, int& moves_away)
 	cout << "2. 56 moves away" << endl;
 	cout << "3. 58 moves away" << endl;
 	cout << "4. 60 moves away" << endl;
+	cout << "5. 30 moves away" << endl;
 	cout << "==========================" << endl;
 	cout << "Input: ";
 	cin >> input;
@@ -69,6 +70,12 @@ void select_table(int* current_table, int& moves_away)
 	{
 		moves_away = 60;
 		int temp_table[17] = { 8, 12, 13, 1, 14, 5, 9, 0, 2, 6, 15, 10, 11, 7, 3, 4, 0 };
+		copy_table_with_action(temp_table, current_table);
+	}
+	else if (input == 5)
+	{
+		moves_away = 30;
+		int temp_table[17] = { 1, 10, 5, 3, 4, 7, 11, 13, 8, 2, 0, 14, 9, 6, 12, 15, 0 };
 		copy_table_with_action(temp_table, current_table);
 	}
 	else
@@ -177,7 +184,7 @@ int main() {
 
 	
 	//trainPartition1or2Encoded(partition2, "../NeuralNetworks/partition2");
-
+	//trainPartition3Encoded(partition3);
 
 	//udaljena za 50
 	int real_table[17] = { 4, 15, 0, 10, 2, 14, 13, 3, 9, 12, 1, 6, 5, 7, 11, 8, 0 };

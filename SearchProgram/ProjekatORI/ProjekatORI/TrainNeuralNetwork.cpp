@@ -248,10 +248,16 @@ void trainPartition1or2Encoded(int****** partition, std::string partition_name)
 void trainPartition3Encoded(int*** partition3)
 {
 	tiny_dnn::network<tiny_dnn::sequential> net;
-	//net << tiny_dnn::fully_connected_layer(48, 96);
-	//net << tiny_dnn::fully_connected_layer(96, 48);
-	//net << tiny_dnn::fully_connected_layer(48, 16);
-	//net << tiny_dnn::fully_connected_layer(16, 1);
+	/*net << tiny_dnn::fully_connected_layer(48, 96);
+	net << tiny_dnn::leaky_relu_layer();
+	net << tiny_dnn::fully_connected_layer(96, 48);
+	net << tiny_dnn::leaky_relu_layer();
+	net << tiny_dnn::fully_connected_layer(48, 48);
+	net << tiny_dnn::leaky_relu_layer();
+	net << tiny_dnn::fully_connected_layer(48, 16);
+	net << tiny_dnn::leaky_relu_layer();
+	net << tiny_dnn::fully_connected_layer(16, 1);
+	net << tiny_dnn::leaky_relu_layer();*/
 	net.load("../NeuralNetworks/partition3Encoded");
 
 	std::vector<tiny_dnn::vec_t> X;
@@ -295,7 +301,7 @@ void trainPartition3Encoded(int*** partition3)
 		}
 	}
 
-	size_t batch_size = 10;
+	size_t batch_size = 512;
 	int epochs = 10;
 	tiny_dnn::adamax opt;
 
@@ -316,14 +322,14 @@ void trainPartition3Encoded(int*** partition3)
 			net.save("../NeuralNetworks/partition3Encoded");
 			current_lowwest_loss = loss;
 		}
-		else if (loss - current_lowwest_loss > 750)
+		/*else if (loss - current_lowwest_loss > 750)
 		{
 			std::cout << "Changing back to previous best version" << std::endl;
 			std::cout << "Attempted loss was: " << loss << std::endl;
 			net.load("../NeuralNetworks/partition3Encoded");
 			loss = current_lowwest_loss;
 			
-		}
+		}*/
 		if (loss < 2900)
 		{
 			opt.alpha = 0.001;

@@ -138,6 +138,7 @@ int calculate_neural_p663_mix(int****** p1, int****** p2, int*** p3, int* indexe
 	x3[indexes[13] + 16] = 0;
 	x3[indexes[14] + 32] = 0;
 
+	int total3real = p3[indexes[12]][indexes[13]][indexes[14]];
 	return total1 + total2 + total3;
 }
 
