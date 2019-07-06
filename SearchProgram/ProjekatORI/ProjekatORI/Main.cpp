@@ -40,42 +40,63 @@ void select_table(int* current_table, int& moves_away)
 	int input;
 	cout << "Possible distances" << endl;
 	cout << "==========================" << endl;
-	cout << "1. 50 moves away" << endl;
-	cout << "2. 56 moves away" << endl;
-	cout << "3. 58 moves away" << endl;
-	cout << "4. 60 moves away" << endl;
-	cout << "5. 30 moves away" << endl;
+	cout << "1. 30 moves away" << endl;
+	cout << "2. 35 moves away" << endl;
+	cout << "3. 40 moves away" << endl;
+	cout << "4. 45 moves away" << endl;
+	cout << "5. 50 moves away" << endl;
+	cout << "6. 56 moves away" << endl;
+	cout << "7. 58 moves away" << endl;
+	cout << "8. 60 moves away" << endl;
 	cout << "==========================" << endl;
 	cout << "Input: ";
 	cin >> input;
 	if (input == 1)
 	{
+		moves_away = 30;
+		int temp_table[17] = { 1, 10, 5, 3, 4, 7, 11, 13, 8, 2, 0, 14, 9, 6, 12, 15, 0 };
+		copy_table_with_action(temp_table, current_table);
+	}
+	else if (input == 2)
+	{
+		moves_away = 35;
+		int temp_table[17] = { 4, 6, 3, 15, 2, 7, 1, 5, 10, 11, 9, 0, 8, 12, 13, 14, 0 };
+		copy_table_with_action(temp_table, current_table);
+	}
+	else if (input == 3)
+	{
+		moves_away = 40;
+		int temp_table[17] = { 4, 6, 3, 15, 10, 2, 1, 5, 7, 9, 0, 14, 8, 11, 12, 13, 0 };
+		copy_table_with_action(temp_table, current_table);
+	}
+	else if (input == 4)
+	{
+		moves_away = 45;
+		int temp_table[17] = { 4, 6, 3, 15, 2, 1, 12, 14, 10, 0, 5, 9, 7, 8, 11, 13, 0 };
+		copy_table_with_action(temp_table, current_table);
+	}
+	else if (input == 5)
+	{
 		moves_away = 50;
 		int temp_table[17] = { 4, 15, 0, 10, 2, 14, 13, 3, 9, 12, 1, 6, 5, 7, 11, 8, 0 };
 		copy_table_with_action(temp_table, current_table);
 	}
-	else if (input == 2)
+	else if (input == 6)
 	{
 		moves_away = 56;
 		int temp_table[17] = { 8, 12, 13, 1, 14, 15, 5, 10, 6, 9, 0, 4, 2, 11, 7, 3, 0 };
 		copy_table_with_action(temp_table, current_table);
 	}
-	else if (input == 3)
+	else if (input == 7)
 	{
 		moves_away = 58;
 		int temp_table[17] = { 8, 12, 13, 1, 14, 15, 5, 10, 6, 11, 9, 4, 2, 0, 7, 3, 0 };
 		copy_table_with_action(temp_table, current_table);
 	}
-	else if (input == 4)
+	else if (input == 8)
 	{
 		moves_away = 60;
 		int temp_table[17] = { 8, 12, 13, 1, 14, 5, 9, 0, 2, 6, 15, 10, 11, 7, 3, 4, 0 };
-		copy_table_with_action(temp_table, current_table);
-	}
-	else if (input == 5)
-	{
-		moves_away = 30;
-		int temp_table[17] = { 1, 10, 5, 3, 4, 7, 11, 13, 8, 2, 0, 14, 9, 6, 12, 15, 0 };
 		copy_table_with_action(temp_table, current_table);
 	}
 	else
@@ -182,9 +203,6 @@ int main() {
 	initialize_partitions663(partition1, partition2, partition3);
 	initialize_neural_networks();
 
-	
-	//trainPartition1or2Encoded(partition2, "../NeuralNetworks/partition2");
-	//trainPartition3Encoded(partition3);
 
 	//udaljena za 50
 	int real_table[17] = { 4, 15, 0, 10, 2, 14, 13, 3, 9, 12, 1, 6, 5, 7, 11, 8, 0 };

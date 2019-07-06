@@ -352,9 +352,105 @@ void trainPartition3Encoded(int*** partition3)
 	{
 		net.save("../NeuralNetworks/partition3Encoded");
 	}
+}
 
-	
+void trainPartition3VectorDistance(int*** partition3)
+{
+	tiny_dnn::network<tiny_dnn::sequential> net;
+	//net << tiny_dnn::fully_connected_layer(3, 16);
+	//net << tiny_dnn::leaky_relu_layer();
+	//net << tiny_dnn::fully_connected_layer(16, 48);
+	//net << tiny_dnn::tanh_layer();
+	//net << tiny_dnn::fully_connected_layer(48, 48);
+	//net << tiny_dnn::leaky_relu_layer();
+	//net << tiny_dnn::fully_connected_layer(48, 16);
+	//net << tiny_dnn::leaky_relu_layer();
+	//net << tiny_dnn::fully_connected_layer(16, 1);
+	//net << tiny_dnn::leaky_relu_layer();
+	net.load("../NeuralNetworks/partition3VectorDistance");
+	std::vector<tiny_dnn::vec_t> X;
+	std::vector<tiny_dnn::vec_t> result;
+
+	int temp[48];
+	for (int i = 0; i < 48; i++)
+	{
+		temp[i] = 0;
+	}
+
+	for (int i1 = 0; i1 < 16; i1++)
+	{
+		for (int i2 = 0; i2 < 16; i2++)
+		{
+			for (int i3 = 0; i3 < 16; i3++)
+			{
+				if (partition3[i1][i2][i3] != 120)
+				{
+
+
+					tiny_dnn::vec_t vx = {float(i1 - 12), float(i2 - 13), float(i3 - 14)};
 
 
 
+					X.push_back(vx);
+
+
+					tiny_dnn::vec_t vy = { float(partition3[i1][i2][i3]) };
+
+					result.push_back(vy);
+				}
+			}
+		}
+	}
+
+	size_t batch_size = 64;
+	int epochs = 10;
+	tiny_dnn::adamax opt;
+
+
+	double current_lowwest_loss;
+
+	current_lowwest_loss = net.get_loss<tiny_dnn::mse>(X, result);
+	std::cout << "Starting with loss of: " << current_lowwest_loss;
+
+	int iEpoch = 0;
+	auto on_enumerate_epoch = [&]() {
+		// compute loss and disp 1/100 of the time
+		iEpoch++;
+		//if (iEpoch % 1) return;
+		double loss = net.get_loss<tiny_dnn::mse>(X, result);
+		if (loss < current_lowwest_loss)
+		{
+			net.save("../NeuralNetworks/partition3VectorDistance");
+			current_lowwest_loss = loss;
+		}
+		/*else if (loss - current_lowwest_loss > 750)
+		{
+		std::cout << "Changing back to previous best version" << std::endl;
+		std::cout << "Attempted loss was: " << loss << std::endl;
+		net.load("../NeuralNetworks/partition3VectorDistance");
+		loss = current_lowwest_loss;
+
+		}*/
+		if (loss < 2900)
+		{
+			opt.alpha = 0.001;
+		}
+		else
+		{
+			opt.alpha = 0.002;
+		}
+		std::cout << "epoch=" << iEpoch << "/" << epochs << " loss=" << loss
+			<< std::endl;
+	};
+
+	std::cout << "learning partition 3 with 100 epochs:" << std::endl;
+	net.fit<tiny_dnn::mse>(opt, X, result, batch_size, epochs, []() {}, on_enumerate_epoch);
+
+
+
+	double loss = net.get_loss<tiny_dnn::mse>(X, result);
+	if (loss < current_lowwest_loss)
+	{
+		net.save("../NeuralNetworks/partition3VectorDistance");
+	}
 }
